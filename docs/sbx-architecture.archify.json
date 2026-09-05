@@ -1,0 +1,324 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "sbx \u2014 agent sandbox: one image, stackable kits, badge at checkout",
+    "quality_profile": "showcase",
+    "visual_preset": "blueprint",
+    "viewBox": [
+      1120,
+      640
+    ],
+    "views": [
+      {
+        "id": "build",
+        "label": "1 \u00b7 Build & publish",
+        "focus": [
+          "repo",
+          "image",
+          "registry"
+        ],
+        "note": "claude/Dockerfile = Docker's Claude template + AWS CLI + Terraform + aws-badge. Multi-arch build \u2192 registry. No account values inside."
+      },
+      {
+        "id": "checkout",
+        "label": "2 \u00b7 Checkout",
+        "focus": [
+          "you",
+          "sbx",
+          "image",
+          "kits",
+          "vm"
+        ],
+        "note": "sbx run -t <image> --kit kit-fw --kit kit-aws claude. Kits merge in order: fence, badge writer, optional Bedrock preset."
+      },
+      {
+        "id": "runtime",
+        "label": "3 \u00b7 Inside the VM",
+        "focus": [
+          "vm",
+          "sso",
+          "aws",
+          "model"
+        ],
+        "note": "Values at launch \u2192 aws-badge writes ~/.aws/config \u2192 SSO login \u2192 badge. Model backend via /login: Claude.ai \u00b7 API key \u00b7 Bedrock."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "repo",
+      "type": "external",
+      "label": "sbx repo",
+      "sublabel": "claude/ \u00b7 kit-fw \u00b7 kit-aws \u00b7 kit-bedrock",
+      "pos": [
+        38,
+        120
+      ],
+      "size": [
+        170,
+        68
+      ]
+    },
+    {
+      "id": "image",
+      "type": "backend",
+      "label": "claude-base-tools",
+      "sublabel": "template image \u00b7 no values",
+      "pos": [
+        300,
+        120
+      ],
+      "size": [
+        160,
+        68
+      ]
+    },
+    {
+      "id": "registry",
+      "type": "database",
+      "label": "Registry",
+      "sublabel": "Docker Hub / Quay",
+      "pos": [
+        560,
+        120
+      ],
+      "size": [
+        140,
+        68
+      ]
+    },
+    {
+      "id": "you",
+      "type": "external",
+      "label": "You",
+      "sublabel": "sbx run \u2026",
+      "pos": [
+        38,
+        340
+      ],
+      "size": [
+        138,
+        68
+      ]
+    },
+    {
+      "id": "sbx",
+      "type": "frontend",
+      "label": "sbx CLI",
+      "sublabel": "pulls \u00b7 merges kits \u00b7 boots VM",
+      "pos": [
+        300,
+        340
+      ],
+      "size": [
+        160,
+        68
+      ]
+    },
+    {
+      "id": "kits",
+      "type": "messagebus",
+      "label": "Kits",
+      "sublabel": "fw \u00b7 aws \u00b7 bedrock",
+      "pos": [
+        300,
+        500
+      ],
+      "size": [
+        160,
+        68
+      ]
+    },
+    {
+      "id": "vm",
+      "type": "backend",
+      "label": "Sandbox microVM",
+      "sublabel": "Claude \u00b7 aws \u00b7 terraform",
+      "pos": [
+        560,
+        340
+      ],
+      "size": [
+        160,
+        68
+      ]
+    },
+    {
+      "id": "sso",
+      "type": "security",
+      "label": "IAM Identity Center",
+      "sublabel": "device-code login",
+      "pos": [
+        820,
+        220
+      ],
+      "size": [
+        160,
+        68
+      ]
+    },
+    {
+      "id": "aws",
+      "type": "cloud",
+      "label": "AWS account",
+      "sublabel": "badge: ro | rw",
+      "pos": [
+        820,
+        340
+      ],
+      "size": [
+        160,
+        68
+      ]
+    },
+    {
+      "id": "model",
+      "type": "cloud",
+      "label": "Model backend",
+      "sublabel": "Claude.ai \u00b7 API \u00b7 Bedrock",
+      "pos": [
+        820,
+        460
+      ],
+      "size": [
+        160,
+        68
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "security-group",
+      "label": "host (Mac / docker-host) \u00b7 sbx fence: deny-by-default + kit-fw allowlist",
+      "wraps": [
+        "sbx",
+        "kits",
+        "vm"
+      ],
+      "pad": 18
+    },
+    {
+      "kind": "region",
+      "label": "AWS",
+      "wraps": [
+        "sso",
+        "aws"
+      ],
+      "pad": 16
+    }
+  ],
+  "connections": [
+    {
+      "id": "b1",
+      "from": "repo",
+      "to": "image",
+      "label": "docker build",
+      "variant": "emphasis"
+    },
+    {
+      "id": "b2",
+      "from": "image",
+      "to": "registry",
+      "label": "buildx --push",
+      "variant": "emphasis"
+    },
+    {
+      "id": "c1",
+      "from": "you",
+      "to": "sbx",
+      "label": "sbx run -t \u2026 --kit \u2026",
+      "variant": "emphasis"
+    },
+    {
+      "id": "c2",
+      "from": "registry",
+      "to": "sbx",
+      "label": "pull template",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "c3",
+      "from": "kits",
+      "to": "sbx",
+      "label": "merge in order",
+      "variant": "dashed",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "c4",
+      "from": "sbx",
+      "to": "vm",
+      "label": "boot",
+      "variant": "emphasis"
+    },
+    {
+      "id": "r1",
+      "from": "vm",
+      "to": "sso",
+      "label": "aws sso login",
+      "variant": "dashed",
+      "fromSide": "right",
+      "toSide": "bottom",
+      "via": [
+        [
+          770,
+          374
+        ],
+        [
+          770,
+          300
+        ],
+        [
+          900,
+          300
+        ]
+      ],
+      "labelAt": [
+        770,
+        338
+      ]
+    },
+    {
+      "id": "r2",
+      "from": "vm",
+      "to": "aws",
+      "label": "1-hr creds as YOU",
+      "variant": "emphasis",
+      "labelAt": [
+        798,
+        422
+      ]
+    },
+    {
+      "id": "r3",
+      "from": "vm",
+      "to": "model",
+      "label": "/login choice",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "left"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Why it's safe",
+      "items": [
+        "Image carries tools only \u2014 no keys, no account values",
+        "Badge chosen at checkout; every call attributed to a person"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Why it's simple",
+      "items": [
+        "One image, kits stack: fence \u00b7 badge \u00b7 Bedrock",
+        "Change a rule = edit YAML; no rebuild"
+      ]
+    }
+  ]
+}
