@@ -15,7 +15,5 @@ network:
     - "releases.hashicorp.com"
     - "*.anthropic.com"
     - "*.claude.ai"
-    - "*.openai.com"
-    - "*.chatgpt.com"
     - "github.com"
     - "gitlab.com"
