@@ -50,7 +50,7 @@
       "id": "repo",
       "type": "external",
       "label": "sbx repo",
-      "sublabel": "claude/ \u00b7 kit-fw \u00b7 kit-aws \u00b7 kit-bedrock",
+      "sublabel": "Dockerfile \u00b7 3 kits",
       "pos": [
         38,
         120
@@ -64,7 +64,7 @@
       "id": "image",
       "type": "backend",
       "label": "claude-base-tools",
-      "sublabel": "template image \u00b7 no values",
+      "sublabel": "template \u00b7 no values",
       "pos": [
         300,
         120
@@ -78,7 +78,7 @@
       "id": "registry",
       "type": "database",
       "label": "Registry",
-      "sublabel": "Docker Hub / Quay",
+      "sublabel": "Hub / Quay",
       "pos": [
         560,
         120
@@ -106,7 +106,7 @@
       "id": "sbx",
       "type": "frontend",
       "label": "sbx CLI",
-      "sublabel": "pulls \u00b7 merges kits \u00b7 boots VM",
+      "sublabel": "pull \u00b7 merge \u00b7 boot",
       "pos": [
         300,
         340
@@ -134,7 +134,7 @@
       "id": "vm",
       "type": "backend",
       "label": "Sandbox microVM",
-      "sublabel": "Claude \u00b7 aws \u00b7 terraform",
+      "sublabel": "claude \u00b7 aws \u00b7 tf",
       "pos": [
         560,
         340
