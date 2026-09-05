@@ -1,0 +1,31 @@
+# sbx kit: AWS-lab egress allowlist + badge defaults. Layer it on any sandbox:
+#   sbx run --kit ./sbx/kit-aws -t sandbox-sbx-claude:latest claude
+kind: kit
+name: aws-lab
+description: AWS SSO badge (ro default) + Terraform/AWS egress allowlist
+
+environment:
+  variables:
+    AWS_PROFILE: sandbox-ro          # override at run: -e AWS_PROFILE=sandbox-rw
+    AWS_REGION: us-east-1
+
+permissions:
+  network:
+    allow:
+      - "*.amazonaws.com"
+      - "*.awsapps.com"
+      - "*.aws.amazon.com"
+      - "*.app.aws"
+      - "registry.terraform.io"
+      - "releases.hashicorp.com"
+      - "*.anthropic.com"
+      - "github.com"
+      - "gitlab.com"
+
+agentInstructions:
+  content: |
+    You are in an AWS lab sandbox. AWS auth is IAM Identity Center SSO.
+    If an AWS command fails with "Error loading SSO Token" or "credentials",
+    run `aws sso login --use-device-code` and show the user the URL + code.
+    AWS_PROFILE is sandbox-ro (read-only) unless the user launched with sandbox-rw.
+    For Claude via Bedrock in this account, the user sets CLAUDE_CODE_USE_BEDROCK=1.
