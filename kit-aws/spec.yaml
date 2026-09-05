@@ -1,21 +1,30 @@
-# sbx kit (v0.39 schema): AWS badge defaults + egress allowlist. Layer on any sandbox:
-#   sbx run -t sandbox-sbx-claude:latest --kit ./sbx/kit-aws claude
+# sbx kit (v0.39 schema). Carries the ACCOUNT VALUES + allowlist; the image stays generic.
+#   sbx run -t <template> --kit ./sbx/kit-aws claude            (RO)
+#   sbx run -t <template> --kit ./sbx/kit-aws -e AWS_PROFILE=sandbox-rw claude
+# Work: copy this kit, change the three account values (and role names if theirs differ).
 schemaVersion: 1
 kind: mixin
 name: aws-lab
-description: AWS SSO badge (ro default) + Terraform/AWS egress allowlist
+description: AWS SSO badge (ro default), account values, Terraform/AWS egress allowlist
 
 environment:
   variables:
-    AWS_PROFILE: sandbox-ro        # override at run: -e AWS_PROFILE=sandbox-rw
+    SSO_START_URL: https://d-90667c720b.awsapps.com/start
+    AWS_ACCOUNT_ID: "350823026613"
+    SSO_REGION: us-east-1
     AWS_REGION: us-east-1
-    # Bedrock model pins (CLAUDE_CODE_USE_BEDROCK=1). Claude Code's defaults are the newest
-    # models (Sonnet 5 / Opus 5), which are sales-gated on a personal account -> pin to what's enabled.
+    AWS_PROFILE: sandbox-ro        # -e AWS_PROFILE=sandbox-rw for the write badge
+    # Bedrock model pins (CLAUDE_CODE_USE_BEDROCK=1). Claude Code defaults to Sonnet 5 / Opus 5,
+    # which are sales-gated on a personal account -> pin to what's enabled.
     ANTHROPIC_MODEL: us.anthropic.claude-sonnet-4-6
     ANTHROPIC_DEFAULT_SONNET_MODEL: us.anthropic.claude-sonnet-4-6
     ANTHROPIC_DEFAULT_OPUS_MODEL: us.anthropic.claude-opus-4-5-20251101-v1:0
     ANTHROPIC_DEFAULT_HAIKU_MODEL: us.anthropic.claude-haiku-4-5-20251001-v1:0
     ANTHROPIC_SMALL_FAST_MODEL: us.anthropic.claude-haiku-4-5-20251001-v1:0
+
+commands:
+  startup:
+    - command: ["aws-badge"]
 
 network:
   allowedDomains:
@@ -30,8 +39,8 @@ network:
     - "gitlab.com"
 
 memory: |
-  You are in an AWS lab sandbox. AWS auth is IAM Identity Center SSO.
+  You are in an AWS lab sandbox. AWS auth is IAM Identity Center SSO; profiles were written by `aws-badge`.
   If an AWS command fails with "Error loading SSO Token" or a credentials error,
   run `aws sso login --use-device-code` and show the user the URL + code.
   AWS_PROFILE is sandbox-ro (read-only) unless the user launched with sandbox-rw.
-  For Claude via Bedrock in this account the user sets CLAUDE_CODE_USE_BEDROCK=1.
+  If ~/.aws/config is missing, run `aws-badge` (needs SSO_START_URL and AWS_ACCOUNT_ID in the environment).

@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# Write the AWS SSO badge profiles from env. Run by the kit at sandbox start (or by hand).
+#   needs: SSO_START_URL  AWS_ACCOUNT_ID   optional: SSO_REGION (us-east-1)  RO_ROLE (sandbox-ro)  RW_ROLE (sandbox-rw)
+set -euo pipefail
+: "${SSO_START_URL:?aws-badge: set SSO_START_URL}"; : "${AWS_ACCOUNT_ID:?aws-badge: set AWS_ACCOUNT_ID}"
+SSO_REGION="${SSO_REGION:-us-east-1}"; RO_ROLE="${RO_ROLE:-sandbox-ro}"; RW_ROLE="${RW_ROLE:-sandbox-rw}"
+mkdir -p "$HOME/.aws"
+cat > "$HOME/.aws/config" <<CFG
+[sso-session lab]
+sso_start_url = ${SSO_START_URL}
+sso_region = ${SSO_REGION}
+sso_registration_scopes = sso:account:access
+
+[profile ${RO_ROLE}]
+sso_session = lab
+sso_account_id = ${AWS_ACCOUNT_ID}
+sso_role_name = ${RO_ROLE}
+region = ${SSO_REGION}
+
+[profile ${RW_ROLE}]
+sso_session = lab
+sso_account_id = ${AWS_ACCOUNT_ID}
+sso_role_name = ${RW_ROLE}
+region = ${SSO_REGION}
+CFG
+echo "aws-badge: profiles ${RO_ROLE} / ${RW_ROLE} -> account ${AWS_ACCOUNT_ID} (${SSO_REGION}); AWS_PROFILE=${AWS_PROFILE:-unset}"
