@@ -9,6 +9,7 @@ environment:
   variables:
     AWS_PROFILE: sandbox-ro        # override at run: -e AWS_PROFILE=sandbox-rw
     AWS_REGION: us-east-1
+    ANTHROPIC_MODEL: us.anthropic.claude-sonnet-4-6      # Bedrock model when CLAUDE_CODE_USE_BEDROCK=1 (Marketplace-subscribed)
 
 network:
   allowedDomains:
