@@ -2,7 +2,10 @@
 # Write the AWS SSO badge profiles from env. Run by the kit at sandbox start (or by hand).
 #   needs: SSO_START_URL  AWS_ACCOUNT_ID   optional: SSO_REGION (us-east-1)  RO_ROLE (sandbox-ro)  RW_ROLE (sandbox-rw)
 set -euo pipefail
-: "${SSO_START_URL:?aws-badge: set SSO_START_URL}"; : "${AWS_ACCOUNT_ID:?aws-badge: set AWS_ACCOUNT_ID}"
+if [ -z "${SSO_START_URL:-}" ] || [ -z "${AWS_ACCOUNT_ID:-}" ]; then
+  echo "aws-badge: no SSO_START_URL / AWS_ACCOUNT_ID given -> ~/.aws/config left blank. Set them and run aws-badge, or edit ~/.aws/config."
+  exit 0
+fi
 SSO_REGION="${SSO_REGION:-us-east-1}"; RO_ROLE="${RO_ROLE:-sandbox-ro}"; RW_ROLE="${RW_ROLE:-sandbox-rw}"
 mkdir -p "$HOME/.aws"
 cat > "$HOME/.aws/config" <<CFG

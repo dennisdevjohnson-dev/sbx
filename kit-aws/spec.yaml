@@ -1,7 +1,7 @@
-# sbx kit (v0.39 schema). Carries the ACCOUNT VALUES + allowlist; the image stays generic.
+# sbx kit (v0.39 schema). Egress allowlist + badge writer. NO account values — pass them with -e at launch.
 #   sbx run -t <template> --kit ./sbx/kit-aws claude            (RO)
 #   sbx run -t <template> --kit ./sbx/kit-aws -e AWS_PROFILE=sandbox-rw claude
-# Work: copy this kit, change the three account values (and role names if theirs differ).
+
 schemaVersion: 1
 kind: mixin
 name: aws-lab
@@ -9,11 +9,10 @@ description: AWS SSO badge (ro default), account values, Terraform/AWS egress al
 
 environment:
   variables:
-    SSO_START_URL: https://d-90667c720b.awsapps.com/start
-    AWS_ACCOUNT_ID: "350823026613"
-    SSO_REGION: us-east-1
+    # No account values here. Supply at launch and aws-badge writes ~/.aws/config; otherwise blank.
+    #   -e SSO_START_URL=https://<id>.awsapps.com/start -e AWS_ACCOUNT_ID=<12 digits> [-e SSO_REGION=us-east-1]
+    #   [-e RO_ROLE=<permission set> -e RW_ROLE=<permission set>]  [-e AWS_PROFILE=<ro|rw role name>]
     AWS_REGION: us-east-1
-    AWS_PROFILE: sandbox-ro        # -e AWS_PROFILE=sandbox-rw for the write badge
 
 commands:
   startup:
@@ -35,8 +34,8 @@ network:
     - "gitlab.com"
 
 memory: |
-  You are in an AWS lab sandbox. AWS auth is IAM Identity Center SSO; profiles were written by `aws-badge`.
+  You are in an AWS sandbox. AWS auth is IAM Identity Center SSO. If ~/.aws/config is missing, ask the user for
+  SSO_START_URL and AWS_ACCOUNT_ID, then run `SSO_START_URL=... AWS_ACCOUNT_ID=... aws-badge` (or the user edits ~/.aws/config).
   If an AWS command fails with "Error loading SSO Token" or a credentials error,
   run `aws sso login --use-device-code` and show the user the URL + code.
-  AWS_PROFILE is sandbox-ro (read-only) unless the user launched with sandbox-rw.
-  If ~/.aws/config is missing, run `aws-badge` (needs SSO_START_URL and AWS_ACCOUNT_ID in the environment).
+  Set AWS_PROFILE to the badge (role) the user wants.

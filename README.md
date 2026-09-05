@@ -17,6 +17,9 @@ Pick the model backend yourself:
 
     sbx run -t claude-base-tools:latest --kit ./sbx/kit-aws claude
         -> inside, `/login`: 1 Claude.ai account (Max)  2 Anthropic API key  3 Bedrock / Vertex / Foundry
+        -> AWS: blank until you give it values. Either pass them at launch:
+             -e SSO_START_URL=https://<id>.awsapps.com/start -e AWS_ACCOUNT_ID=<12 digits> -e AWS_PROFILE=sandbox-ro
+           or edit ~/.aws/config inside, or run `SSO_START_URL=... AWS_ACCOUNT_ID=... aws-badge` inside.
 
 Or preset Bedrock (no Anthropic key at all) by stacking the add-on kit. Bedrock needs the AWS
 badge BEFORE Claude can answer, so log in first on a fresh sandbox:
