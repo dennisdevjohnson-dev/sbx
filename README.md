@@ -3,7 +3,12 @@
     brew install docker/tap/sbx        (Windows: winget install Docker.sbx; Linux: apt install docker-sbx)
     sbx login
 
-Build the template (Docker's official claude-code sandbox image + AWS CLI + Terraform + `aws-badge`). GENERIC: no account values in the image — the kit supplies SSO_START_URL / AWS_ACCOUNT_ID and runs `aws-badge` at start:
+Published template (multi-arch: arm64 Macs, amd64 Windows/Linux):
+
+    ghcr.io/dennisdevjohnson-dev/claude-base-tools:v1        # private: docker login ghcr.io first (or sbx secret set --registry ghcr.io)
+    sbx run -t ghcr.io/dennisdevjohnson-dev/claude-base-tools:v1 --kit ./kit-fw --kit ./kit-aws claude
+
+Or build it yourself (Docker's official claude-code sandbox image + AWS CLI + Terraform + `aws-badge`). GENERIC: no account values in the image — pass SSO_START_URL / AWS_ACCOUNT_ID at launch and `aws-badge` writes the profiles:
 
     docker build -t claude-base-tools:latest sbx/claude
 
@@ -72,3 +77,12 @@ Opus 5) are sales-gated on personal accounts. Same thing as env vars: `-e CLAUDE
 at launch, or the kit-bedrock add-on.
 
 Inside any sandbox: `cat /etc/sandbox/README.md`
+
+## Publish + scan
+
+    docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/<owner>/claude-base-tools:v1 --push claude
+    docker scout quickview claude-base-tools:latest        # local CVE scan (Trivy/Xray say the same)
+
+Scout on v1: 8 critical / 106 high — Docker's base template alone is 5C / 77H; ours adds AWS CLI's bundled
+Python deps. Terraform is pinned to the current release (1.5.7 carried ~15 criticals via Go 1.20-era libs).
+Work imports the image into Artifactory and Xray scans it there.
