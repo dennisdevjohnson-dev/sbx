@@ -5,12 +5,12 @@
 
 Build the template (Docker's official claude-code sandbox image + AWS CLI + Terraform + `aws-badge`). GENERIC: no account values in the image — the kit supplies SSO_START_URL / AWS_ACCOUNT_ID and runs `aws-badge` at start:
 
-    docker build -t sbx-aws-claude:latest sbx/claude
+    docker build -t claude-base-tools:latest sbx/claude
 
 Check out a sandbox (microVM, Docker's fence, deny-by-default egress + our allowlist kit):
 
-    sbx run -t sbx-aws-claude:latest --kit ./sbx/kit-aws claude                 # RO badge
-    sbx run -t sbx-aws-claude:latest --kit ./sbx/kit-aws -e AWS_PROFILE=sandbox-rw claude   # RW
+    sbx run -t claude-base-tools:latest --kit ./sbx/kit-aws claude                 # RO badge
+    sbx run -t claude-base-tools:latest --kit ./sbx/kit-aws -e AWS_PROFILE=sandbox-rw claude   # RW
     sbx run ... -e CLAUDE_CODE_USE_BEDROCK=1 -e AWS_REGION=us-east-1 claude          # Claude via Bedrock
 
 First AWS call in a fresh sandbox: `aws sso login --use-device-code` (URL + code in your browser).
