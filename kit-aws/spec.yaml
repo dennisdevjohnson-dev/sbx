@@ -1,11 +1,11 @@
-# sbx kit (v0.39 schema). Egress allowlist + badge writer. NO account values — pass them with -e at launch.
+# sbx kit: AWS badge writer + AWS instructions. NO account values — pass them with -e at launch. Fence is kit-fw.
 #   sbx run -t <template> --kit ./sbx/kit-aws claude            (RO)
 #   sbx run -t <template> --kit ./sbx/kit-aws -e AWS_PROFILE=sandbox-rw claude
 
 schemaVersion: 1
 kind: mixin
 name: aws-lab
-description: AWS SSO badge (ro default), account values, Terraform/AWS egress allowlist. Model backend is the user's choice (/login) — add kit-bedrock to preset Bedrock.
+description: AWS SSO badge writer (aws-badge at start) + AWS guidance. Model backend is the user's choice (/login); add kit-bedrock to preset Bedrock.
 
 environment:
   variables:
@@ -18,20 +18,6 @@ commands:
   startup:
     - command: ["aws-badge"]
 
-network:
-  allowedDomains:
-    - "*.amazonaws.com"
-    - "*.awsapps.com"
-    - "*.aws.amazon.com"
-    - "*.app.aws"
-    - "registry.terraform.io"
-    - "releases.hashicorp.com"
-    - "*.anthropic.com"
-    - "*.claude.ai"
-    - "*.openai.com"
-    - "*.chatgpt.com"
-    - "github.com"
-    - "gitlab.com"
 
 memory: |
   You are in an AWS sandbox. AWS auth is IAM Identity Center SSO. If ~/.aws/config is missing, ask the user for

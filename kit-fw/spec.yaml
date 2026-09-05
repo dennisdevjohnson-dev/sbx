@@ -1,0 +1,21 @@
+# sbx kit: egress allowlist (the fence). Stack on any sandbox: --kit ./kit-fw
+# Deny-by-default is sbx's; this is what's permitted. Edit here, not in the image.
+schemaVersion: 1
+kind: mixin
+name: fw
+description: Egress allowlist — AWS, Terraform registry, model APIs, GitHub/GitLab
+
+network:
+  allowedDomains:
+    - "*.amazonaws.com"
+    - "*.awsapps.com"
+    - "*.aws.amazon.com"
+    - "*.app.aws"
+    - "registry.terraform.io"
+    - "releases.hashicorp.com"
+    - "*.anthropic.com"
+    - "*.claude.ai"
+    - "*.openai.com"
+    - "*.chatgpt.com"
+    - "github.com"
+    - "gitlab.com"
