@@ -2,7 +2,7 @@
 # Badge profiles are written at sandbox start by `aws-badge` from env supplied by the kit / -e.
 FROM docker/sandbox-templates:claude-code
 
-ARG TERRAFORM_VERSION=1.5.7
+ARG TERRAFORM_VERSION=1.16.1
 ARG TARGETARCH
 
 USER root
