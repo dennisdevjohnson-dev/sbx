@@ -1,6 +1,8 @@
 # sbx template: Docker's official Claude Code sandbox + the AWS toolbelt. GENERIC — no account values.
 # Badge profiles are written at sandbox start by `aws-badge` from env supplied by the kit / -e.
 FROM docker/sandbox-templates:claude-code
+LABEL org.opencontainers.image.source="https://github.com/dennisdevjohnson-dev/sbx" \
+      org.opencontainers.image.description="Claude Code sandbox template: AWS CLI + Terraform + aws-badge. No credentials baked in."
 
 ARG TERRAFORM_VERSION=1.16.1
 ARG TARGETARCH
