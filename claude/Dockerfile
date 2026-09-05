@@ -15,5 +15,6 @@ RUN ARCH=$([ "$TARGETARCH" = "arm64" ] && echo arm64 || echo amd64) \
     && curl -fsSL "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_${ARCH}.zip" -o /tmp/tf.zip \
     && unzip -q /tmp/tf.zip -d /usr/local/bin && rm /tmp/tf.zip
 COPY aws-badge /usr/local/bin/aws-badge
+COPY README.md /etc/sandbox/README.md
 RUN chmod +x /usr/local/bin/aws-badge
 USER agent
