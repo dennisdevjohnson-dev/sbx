@@ -9,7 +9,13 @@ environment:
   variables:
     AWS_PROFILE: sandbox-ro        # override at run: -e AWS_PROFILE=sandbox-rw
     AWS_REGION: us-east-1
-    ANTHROPIC_MODEL: us.anthropic.claude-sonnet-4-6      # Bedrock model when CLAUDE_CODE_USE_BEDROCK=1 (Marketplace-subscribed)
+    # Bedrock model pins (CLAUDE_CODE_USE_BEDROCK=1). Claude Code's defaults are the newest
+    # models (Sonnet 5 / Opus 5), which are sales-gated on a personal account -> pin to what's enabled.
+    ANTHROPIC_MODEL: us.anthropic.claude-sonnet-4-6
+    ANTHROPIC_DEFAULT_SONNET_MODEL: us.anthropic.claude-sonnet-4-6
+    ANTHROPIC_DEFAULT_OPUS_MODEL: us.anthropic.claude-opus-4-5-20251101-v1:0
+    ANTHROPIC_DEFAULT_HAIKU_MODEL: us.anthropic.claude-haiku-4-5-20251001-v1:0
+    ANTHROPIC_SMALL_FAST_MODEL: us.anthropic.claude-haiku-4-5-20251001-v1:0
 
 network:
   allowedDomains:
