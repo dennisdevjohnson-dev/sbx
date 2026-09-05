@@ -13,14 +13,19 @@ Check out a sandbox (microVM, Docker's fence, deny-by-default egress + our allow
     sbx run -t claude-base-tools:latest --kit ./sbx/kit-aws -e AWS_PROFILE=sandbox-rw claude   # RW
     sbx run ... -e CLAUDE_CODE_USE_BEDROCK=1 -e AWS_REGION=us-east-1 claude          # Claude via Bedrock
 
-Bedrock mode is the default (no Anthropic key). Because Claude itself needs the AWS badge to answer,
-log in BEFORE attaching the agent on a fresh sandbox:
+Pick the model backend yourself:
 
-    sbx create claude --kit ./sbx/kit-aws -t claude-base-tools:latest --name <name> .
+    sbx run -t claude-base-tools:latest --kit ./sbx/kit-aws claude
+        -> inside, `/login`: 1 Claude.ai account (Max)  2 Anthropic API key  3 Bedrock / Vertex / Foundry
+
+Or preset Bedrock (no Anthropic key at all) by stacking the add-on kit. Bedrock needs the AWS
+badge BEFORE Claude can answer, so log in first on a fresh sandbox:
+
+    sbx create claude --kit ./sbx/kit-aws --kit ./sbx/kit-bedrock -t claude-base-tools:latest --name <name> .
     sbx exec <name> -- aws sso login --use-device-code      # URL + code in your browser (~8h)
     sbx run <name>
 
-Anthropic-direct instead: add `-e CLAUDE_CODE_USE_BEDROCK=0` and `/login` inside.
+Codex / other agents: same kit-aws, their own login.
 
 Differences from the docker-host catalog (`sandbox.sh`):
 - sbx launches the agent itself; the kit's startup command runs `aws-badge`, which writes the two SSO profiles from env

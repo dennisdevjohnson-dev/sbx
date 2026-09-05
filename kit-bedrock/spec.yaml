@@ -1,0 +1,22 @@
+# Optional add-on: preset Claude via Bedrock in the account (no Anthropic key), models pinned to
+# what's enabled here. Stack it:  --kit ./sbx/kit-aws --kit ./sbx/kit-bedrock
+# Bedrock needs the AWS badge BEFORE the agent starts: sbx create ... ; sbx exec <name> -- aws sso login --use-device-code ; sbx run <name>
+schemaVersion: 1
+kind: mixin
+name: aws-lab-bedrock
+description: Claude via Bedrock preset (CLAUDE_CODE_USE_BEDROCK=1) + model pins
+
+environment:
+  variables:
+    CLAUDE_CODE_USE_BEDROCK: "1"
+    # Claude Code defaults to Sonnet 5 / Opus 5, which are sales-gated on a personal account -> pin to what's enabled.
+    ANTHROPIC_MODEL: us.anthropic.claude-sonnet-4-6
+    ANTHROPIC_DEFAULT_SONNET_MODEL: us.anthropic.claude-sonnet-4-6
+    ANTHROPIC_DEFAULT_OPUS_MODEL: us.anthropic.claude-opus-4-5-20251101-v1:0
+    ANTHROPIC_DEFAULT_HAIKU_MODEL: us.anthropic.claude-haiku-4-5-20251001-v1:0
+    ANTHROPIC_SMALL_FAST_MODEL: us.anthropic.claude-haiku-4-5-20251001-v1:0
+
+memory: |
+  Claude is running via Amazon Bedrock using the AWS badge; there is no Anthropic key.
+  If AWS calls fail with "Error loading SSO Token", the user must run
+  `sbx exec <sandbox> -- aws sso login --use-device-code` from the host and re-attach.

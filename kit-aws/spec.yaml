@@ -5,7 +5,7 @@
 schemaVersion: 1
 kind: mixin
 name: aws-lab
-description: AWS SSO badge (ro default), account values, Terraform/AWS egress allowlist
+description: AWS SSO badge (ro default), account values, Terraform/AWS egress allowlist. Model backend is the user's choice (/login) — add kit-bedrock to preset Bedrock.
 
 environment:
   variables:
@@ -14,14 +14,6 @@ environment:
     SSO_REGION: us-east-1
     AWS_REGION: us-east-1
     AWS_PROFILE: sandbox-ro        # -e AWS_PROFILE=sandbox-rw for the write badge
-    # Claude via Bedrock in this account (no Anthropic key). Claude Code defaults to Sonnet 5 / Opus 5,
-    # which are sales-gated on a personal account -> pin to what's enabled.
-    CLAUDE_CODE_USE_BEDROCK: "1"
-    ANTHROPIC_MODEL: us.anthropic.claude-sonnet-4-6
-    ANTHROPIC_DEFAULT_SONNET_MODEL: us.anthropic.claude-sonnet-4-6
-    ANTHROPIC_DEFAULT_OPUS_MODEL: us.anthropic.claude-opus-4-5-20251101-v1:0
-    ANTHROPIC_DEFAULT_HAIKU_MODEL: us.anthropic.claude-haiku-4-5-20251001-v1:0
-    ANTHROPIC_SMALL_FAST_MODEL: us.anthropic.claude-haiku-4-5-20251001-v1:0
 
 commands:
   startup:
@@ -36,11 +28,14 @@ network:
     - "registry.terraform.io"
     - "releases.hashicorp.com"
     - "*.anthropic.com"
+    - "*.claude.ai"
+    - "*.openai.com"
+    - "*.chatgpt.com"
     - "github.com"
     - "gitlab.com"
 
 memory: |
-  You are in an AWS lab sandbox running Claude via Bedrock with the AWS badge. AWS auth is IAM Identity Center SSO; profiles were written by `aws-badge`.
+  You are in an AWS lab sandbox. AWS auth is IAM Identity Center SSO; profiles were written by `aws-badge`.
   If an AWS command fails with "Error loading SSO Token" or a credentials error,
   run `aws sso login --use-device-code` and show the user the URL + code.
   AWS_PROFILE is sandbox-ro (read-only) unless the user launched with sandbox-rw.
