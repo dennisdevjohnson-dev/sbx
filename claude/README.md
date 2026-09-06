@@ -143,11 +143,32 @@ What is left, and why it stays:
 - **`brace-expansion`, `minimatch`, `undici`** (3H / 3H / 5H, no criticals) — these survive the purge
   because the `nodejs` package itself depends on them. Removing them means removing Node.
 
+### Version pins
+
+Nothing says `latest` inside a Dockerfile — every tool is pinned to a resolved release number, so a
+build always states exactly what it installed. `./bump.sh` is what moves those pins: it asks each
+upstream for its current release, rewrites the `ARG` lines and prints `old -> new` for each.
+`./bump.sh --check` reports without touching anything and exits non-zero if a pin is behind, which
+is the form to run from cron.
+
+| Tool | Pin | Resolved from |
+|---|---|---|
+| Terraform    | 1.16.1  | `checkpoint-api.hashicorp.com/v1/check/terraform` |
+| terraform-ls | 0.39.0  | `checkpoint-api.hashicorp.com/v1/check/terraform-ls` |
+| Helix        | 25.07.1 | `gh api repos/helix-editor/helix/releases/latest` |
+| npm          | 11.19.1 | held by hand — see below |
+| Claude Code  | not pinned | `claude update` runs at build time (2.1.263 in this build) |
+
+All of these were the current upstream release as of 2026-09-06. npm is the one deliberate exception
+to "track latest": npm 12 requires Node >= 22.22.2 and Ubuntu 26.04 ships 22.22.1, so it prints an
+unsupported-version warning on every single invocation. `bump.sh` reports that gap but will not
+apply it — bump `NPM_VERSION` by hand once the image's Node moves past the floor.
+
 **Rule: rebuild monthly.** Both Dockerfiles deliberately track moving targets — `apt-get upgrade`,
 `claude update`, and Docker's own template underneath. Rebuilding is how upstream fixes reach you;
-a stale image only ever gets worse. Re-scan after every rebuild, and bump `TERRAFORM_VERSION`,
-`TFLS_VERSION` and `NPM_VERSION` when upstream moves. Terraform is worth watching in particular —
-the old 1.5.7 pin carried ~15 criticals via Go 1.20-era libs.
+a stale image only ever gets worse. So: `./bump.sh`, rebuild both images, smoke-test, re-scan.
+Terraform is worth watching in particular — the old 1.5.7 pin carried ~15 criticals via Go 1.20-era
+libs.
 
 ## claude-extra-tools (home flavor)
 
