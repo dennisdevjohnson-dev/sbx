@@ -148,8 +148,10 @@ What is left, and why it stays:
 Nothing says `latest` inside a Dockerfile — every tool is pinned to a resolved release number, so a
 build always states exactly what it installed. `./bump.sh` is what moves those pins: it asks each
 upstream for its current release, rewrites the `ARG` lines and prints `old -> new` for each.
-`./bump.sh --check` reports without touching anything and exits non-zero if a pin is behind, which
-is the form to run from cron.
+`./bump.sh --check` reports without touching anything and is the form to run from cron: it exits 1
+when a pin is behind and 2 when an upstream could not be reached, so a GitHub outage never reads as
+"you are out of date". Run it **on the host** — it talks to HashiCorp's checkpoint API and GitHub,
+which the sandbox fence denies by default.
 
 | Tool | Pin | Resolved from |
 |---|---|---|
