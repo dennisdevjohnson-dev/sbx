@@ -16,7 +16,7 @@ RUN ARCH=$([ "$TARGETARCH" = "arm64" ] && echo aarch64 || echo x86_64) \
     && ln -s /opt/helix-${HELIX_VERSION}-${ARCH}-linux/runtime /opt/helix-runtime \
     && ARCH2=$([ "$TARGETARCH" = "arm64" ] && echo arm64 || echo amd64) \
     && curl -fsSL "https://releases.hashicorp.com/terraform-ls/${TFLS_VERSION}/terraform-ls_${TFLS_VERSION}_linux_${ARCH2}.zip" -o /tmp/tfls.zip \
-    && unzip -q /tmp/tfls.zip -d /usr/local/bin && rm /tmp/tfls.zip
+    && unzip -qo /tmp/tfls.zip terraform-ls -d /usr/local/bin && rm /tmp/tfls.zip
 # archify skill. sbx mounts its shared skills store over ~/.claude/skills, so also run
 # `sbx skills import` on the host once (it picks archify up from ~/.claude/skills there).
 RUN git clone --depth 1 https://github.com/tt-a1i/archify /tmp/archify-repo \
