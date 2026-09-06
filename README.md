@@ -93,3 +93,11 @@ Inside any sandbox: `cat /etc/sandbox/README.md`
 Scout on v1: 8 critical / 106 high — Docker's base template alone is 5C / 77H; ours adds AWS CLI's bundled
 Python deps. Terraform is pinned to the current release (1.5.7 carried ~15 criticals via Go 1.20-era libs).
 Work imports the image into Artifactory and Xray scans it there.
+
+## claude-extra-tools (home flavor)
+
+    ghcr.io/dennisdevjohnson-dev/claude-extra-tools:v1   = claude-base-tools + Helix (hx) + terraform-ls + archify
+
+Same kits, same run line with `-t …/claude-extra-tools:v1`. archify note: sbx mounts a shared
+skills store over `~/.claude/skills` inside sandboxes, so on the host run `sbx skills import`
+once (it copies archify from your `~/.claude/skills`); the image also carries it at /opt/skills/archify.
