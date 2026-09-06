@@ -5,8 +5,8 @@
 
 Published template (multi-arch: arm64 Macs, amd64 Windows/Linux):
 
-    ghcr.io/dennisdevjohnson-dev/claude-base-tools:v1        # public — no registry login needed
-    sbx run -t ghcr.io/dennisdevjohnson-dev/claude-base-tools:v1 --kit "git+https://github.com/dennisdevjohnson-dev/sbx.git#dir=kit-fw" --kit "git+https://github.com/dennisdevjohnson-dev/sbx.git#dir=kit-aws" claude
+    ghcr.io/dennisdevjohnson-dev/claude-base-tools:1        # public — no registry login needed
+    sbx run -t ghcr.io/dennisdevjohnson-dev/claude-base-tools:1 --kit "git+https://github.com/dennisdevjohnson-dev/sbx.git#dir=kit-fw" --kit "git+https://github.com/dennisdevjohnson-dev/sbx.git#dir=kit-aws" claude
 
 Or build it yourself (Docker's official claude-code sandbox image + AWS CLI + Terraform + `aws-badge`). GENERIC: no account values in the image — pass SSO_START_URL / AWS_ACCOUNT_ID at launch and `aws-badge` writes the profiles:
 
@@ -21,13 +21,13 @@ Check out a sandbox (microVM, Docker's fence, deny-by-default egress + our allow
 Fresh machine, nothing but sbx installed (repo + image are public):
 
     sbx login
-    sbx run -t ghcr.io/dennisdevjohnson-dev/claude-base-tools:v1 \
+    sbx run -t ghcr.io/dennisdevjohnson-dev/claude-base-tools:1 \
       --kit "git+https://github.com/dennisdevjohnson-dev/sbx.git#dir=kit-fw" \
       --kit "git+https://github.com/dennisdevjohnson-dev/sbx.git#dir=kit-aws" claude
 
 Prefer to land in bash and start Claude only when you want it? Use the `shell` agent — same image, same kits:
 
-    sbx run -t ghcr.io/dennisdevjohnson-dev/claude-extra-tools:v1 \
+    sbx run -t ghcr.io/dennisdevjohnson-dev/claude-extra-tools:1 \
       --kit "git+https://github.com/dennisdevjohnson-dev/sbx.git#dir=kit-fw" \
       --kit "git+https://github.com/dennisdevjohnson-dev/sbx.git#dir=kit-aws" shell
 
@@ -174,9 +174,9 @@ libs.
 
 ## claude-extra-tools (home flavor)
 
-    ghcr.io/dennisdevjohnson-dev/claude-extra-tools:v1   = claude-base-tools + Helix (hx) + terraform-ls + archify
+    ghcr.io/dennisdevjohnson-dev/claude-extra-tools:1   = claude-base-tools + Helix (hx) + terraform-ls + archify
 
-Same kits, same run line with `-t …/claude-extra-tools:v1`. archify note: sbx mounts a shared
+Same kits, same run line with `-t …/claude-extra-tools:1`. archify note: sbx mounts a shared
 skills store over `~/.claude/skills` inside sandboxes, so on the host run `sbx skills import`
 once (it copies archify from your `~/.claude/skills`); the image also carries it at /opt/skills/archify.
 
