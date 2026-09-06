@@ -2,7 +2,7 @@
 #   Helix (hx) + terraform-ls (HCL go-to-definition) + the archify diagram skill.
 # Local builds use the locally-built tag; release builds swap this for the registry tag
 # ghcr.io/dennisdevjohnson-dev/claude-base-tools:1.1.0 before `buildx --push`.
-FROM claude-base-tools:1.1.0
+FROM ghcr.io/dennisdevjohnson-dev/claude-base-tools:1.1.0
 LABEL org.opencontainers.image.source="https://github.com/dennisdevjohnson-dev/sbx" \
       org.opencontainers.image.description="claude-base-tools + Helix, terraform-ls, archify." \
       org.opencontainers.image.version="1.1.0"
