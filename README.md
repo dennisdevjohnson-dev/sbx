@@ -5,7 +5,7 @@
 
 Published template (multi-arch: arm64 Macs, amd64 Windows/Linux):
 
-    ghcr.io/dennisdevjohnson-dev/claude-base-tools:v1        # private: docker login ghcr.io first (or sbx secret set --registry ghcr.io)
+    ghcr.io/dennisdevjohnson-dev/claude-base-tools:v1        # public — no registry login needed
     sbx run -t ghcr.io/dennisdevjohnson-dev/claude-base-tools:v1 --kit ./kit-fw --kit ./kit-aws claude
 
 Or build it yourself (Docker's official claude-code sandbox image + AWS CLI + Terraform + `aws-badge`). GENERIC: no account values in the image — pass SSO_START_URL / AWS_ACCOUNT_ID at launch and `aws-badge` writes the profiles:
@@ -17,6 +17,13 @@ Check out a sandbox (microVM, Docker's fence, deny-by-default egress + our allow
     sbx run -t claude-base-tools:latest --kit ./sbx/kit-fw --kit ./sbx/kit-aws claude                 # RO badge
     sbx run -t claude-base-tools:latest --kit ./sbx/kit-fw --kit ./sbx/kit-aws -e AWS_PROFILE=sandbox-rw claude   # RW
     sbx run ... -e CLAUDE_CODE_USE_BEDROCK=1 -e AWS_REGION=us-east-1 claude          # Claude via Bedrock
+
+Fresh machine, nothing but sbx installed (repo + image are public):
+
+    sbx login
+    sbx run -t ghcr.io/dennisdevjohnson-dev/claude-base-tools:v1 \
+      --kit "git+https://github.com/dennisdevjohnson-dev/sbx.git#dir=kit-fw" \
+      --kit "git+https://github.com/dennisdevjohnson-dev/sbx.git#dir=kit-aws" claude
 
 Pick the model backend yourself:
 
