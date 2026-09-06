@@ -1,11 +1,14 @@
 # claude-extra-tools: the base template + editor and diagram extras that may not be allowed at work.
 #   Helix (hx) + terraform-ls (HCL go-to-definition) + the archify diagram skill.
-FROM ghcr.io/dennisdevjohnson-dev/claude-base-tools:v1
+# Local builds use the locally-built tag; release builds swap this for the registry tag
+# ghcr.io/dennisdevjohnson-dev/claude-base-tools:1.1.0 before `buildx --push`.
+FROM claude-base-tools:1.1.0
 LABEL org.opencontainers.image.source="https://github.com/dennisdevjohnson-dev/sbx" \
-      org.opencontainers.image.description="claude-base-tools + Helix, terraform-ls, archify."
+      org.opencontainers.image.description="claude-base-tools + Helix, terraform-ls, archify." \
+      org.opencontainers.image.version="1.1.0"
 
 ARG HELIX_VERSION=25.07.1
-ARG TFLS_VERSION=0.36.5
+ARG TFLS_VERSION=0.39.0
 ARG TARGETARCH
 
 USER root

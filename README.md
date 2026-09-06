@@ -96,12 +96,58 @@ Inside any sandbox: `cat /etc/sandbox/README.md`
 
 ## Publish + scan
 
-    docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/<owner>/claude-base-tools:v1 --push claude
-    docker scout quickview claude-base-tools:latest        # local CVE scan (Trivy/Xray say the same)
+    docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/<owner>/claude-base-tools:1.1.0 --push claude
+    docker scout quickview claude-base-tools:1.1.0         # local CVE scan (Trivy/Xray say the same)
 
-Scout on v1: 8 critical / 106 high — Docker's base template alone is 5C / 77H; ours adds AWS CLI's bundled
-Python deps. Terraform is pinned to the current release (1.5.7 carried ~15 criticals via Go 1.20-era libs).
 Work imports the image into Artifactory and Xray scans it there.
+
+## Image hardening (release 1.1.0)
+
+Docker Scout, arm64. `1.1.0` is the same toolset as `v1` — nothing was pinned back, suppressed or
+dropped from the image's job.
+
+| Image | v1 | 1.1.0 |
+|---|---|---|
+| claude-base-tools  |  8C / 106H | **5C / 73H** |
+| claude-extra-tools | 19C / 138H | **6C / 77H** |
+
+For scale: Docker's own `docker/sandbox-templates:claude-code` scans 8C / 104H untouched, so v1's
+numbers were essentially the template's and our own additions cost +2H. 1.1.0 now scans *below* the
+template it is built from.
+
+What changed:
+
+- **`apt-get upgrade -y`** ahead of our installs — picks up the ~41 Ubuntu security updates the
+  template layer predates.
+- **Purged Ubuntu's `npm`** and the ~340 Debian `node-*` packages it drags in, then restored a
+  self-contained upstream npm (`NPM_VERSION`, currently 11.19.1) under `/usr/local`. Ubuntu
+  unbundles npm's dependencies into `/usr/share/nodejs`, and *those* libraries carried nearly every
+  npm CVE in the report — handlebars, tar, `@babel/traverse`, glob, js-yaml, lodash, postcss,
+  nanoid, pacote, browserslist, fast-uri. Nothing in the image used them: Claude Code is a native
+  binary, the AWS CLI bundles its own Python, Terraform is a static Go binary. `node`, `git` and
+  `curl` are untouched; `npm` and `npx` still work, global installs included.
+- **`claude update` at build time** — the template pins whatever Claude Code was current when Docker
+  built it (2.1.246); we pull the release current at *our* build (2.1.263) and delete the superseded
+  version tree the updater leaves behind.
+- **claude-extra-tools only:** `terraform-ls` 0.36.5 → 0.39.0. The old build was compiled with Go
+  1.24 and carried `golang.org/x/crypto` 0.39.0 — 7 criticals on its own. That one bump is the
+  entire 16C → 6C difference. Helix and archify contribute no findings at all.
+
+What is left, and why it stays:
+
+- **Go stdlib and libraries compiled into vendor binaries** — `stdlib`, `golang.org/x/crypto`,
+  `x/mod`, `grpc`, `github.com/docker/cli`, `moby/go-archive`. This is every remaining critical.
+  They live inside the Docker CLI that Docker ships in the template, and inside Terraform and
+  terraform-ls. Only the upstream vendor can rebuild them; there is no local fix short of dropping
+  the tool.
+- **`brace-expansion`, `minimatch`, `undici`** (3H / 3H / 5H, no criticals) — these survive the purge
+  because the `nodejs` package itself depends on them. Removing them means removing Node.
+
+**Rule: rebuild monthly.** Both Dockerfiles deliberately track moving targets — `apt-get upgrade`,
+`claude update`, and Docker's own template underneath. Rebuilding is how upstream fixes reach you;
+a stale image only ever gets worse. Re-scan after every rebuild, and bump `TERRAFORM_VERSION`,
+`TFLS_VERSION` and `NPM_VERSION` when upstream moves. Terraform is worth watching in particular —
+the old 1.5.7 pin carried ~15 criticals via Go 1.20-era libs.
 
 ## claude-extra-tools (home flavor)
 
