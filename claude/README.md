@@ -25,6 +25,15 @@ Fresh machine, nothing but sbx installed (repo + image are public):
       --kit "git+https://github.com/dennisdevjohnson-dev/sbx.git#dir=kit-fw" \
       --kit "git+https://github.com/dennisdevjohnson-dev/sbx.git#dir=kit-aws" claude
 
+Prefer to land in bash and start Claude only when you want it? Use the `shell` agent — same image, same kits:
+
+    sbx run -t ghcr.io/dennisdevjohnson-dev/claude-extra-tools:v1 \
+      --kit "git+https://github.com/dennisdevjohnson-dev/sbx.git#dir=kit-fw" \
+      --kit "git+https://github.com/dennisdevjohnson-dev/sbx.git#dir=kit-aws" shell
+
+    claude        # start Claude Code from bash;  /exit  drops you back to bash, sandbox stays up
+    hx main.tf    # or just use the tools
+
 Pick the model backend yourself:
 
     sbx run -t claude-base-tools:latest --kit "git+https://github.com/dennisdevjohnson-dev/sbx.git#dir=kit-fw" --kit "git+https://github.com/dennisdevjohnson-dev/sbx.git#dir=kit-aws" claude
