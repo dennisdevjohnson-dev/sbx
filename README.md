@@ -101,3 +101,11 @@ Work imports the image into Artifactory and Xray scans it there.
 Same kits, same run line with `-t …/claude-extra-tools:v1`. archify note: sbx mounts a shared
 skills store over `~/.claude/skills` inside sandboxes, so on the host run `sbx skills import`
 once (it copies archify from your `~/.claude/skills`); the image also carries it at /opt/skills/archify.
+
+Build note for claude-extra-tools: the Helix tarball fails under amd64 *emulation* on Apple Silicon
+(`tar: Cannot mkdir: Function not implemented` — Ubuntu 26.04 syscalls vs the emulator). Build each
+arch natively and stitch:
+
+    # Mac (arm64)            docker buildx build --platform linux/arm64 -t <repo>:v1-arm64 --push extra
+    # any x86_64 Linux box   docker buildx build --platform linux/amd64 -t <repo>:v1-amd64 --push extra
+    docker buildx imagetools create -t <repo>:v1 <repo>:v1-arm64 <repo>:v1-amd64
