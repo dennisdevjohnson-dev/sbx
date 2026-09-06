@@ -9,6 +9,7 @@ ARG TARGETARCH
 
 USER root
 RUN apt-get update && apt-get install -y --no-install-recommends unzip jq less \
+      iputils-ping dnsutils netcat-openbsd traceroute iproute2 telnet \
     && rm -rf /var/lib/apt/lists/*
 RUN ARCH=$([ "$TARGETARCH" = "arm64" ] && echo aarch64 || echo x86_64) \
     && curl -fsSL "https://awscli.amazonaws.com/awscli-exe-linux-${ARCH}.zip" -o /tmp/awscli.zip \
